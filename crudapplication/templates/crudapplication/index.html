@@ -1,5 +1,24 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block title %}Crud Application{% endblock %} {%
+block content %} Crud Application Content
 
-{% block title %}Crud Application{% endblock %}
-
-{% block content %}Crud Application Content{% endblock %}
+<table border="1">
+  <thead>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Password</th>
+    <th>Image</th>
+  </thead>
+  <tbody>
+    {% for userDetail in userDetails %}
+    <tr>
+      <td>{{userDetail.name}}</td>
+      <td>{{userDetail.email}}</td>
+      <td>{{userDetail.password}}</td>
+      <td>
+        <img src="{{userDetail.image.url}}" alt="" height="10%" width="10%" />
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from .models import UserDetails
 
 
 def index(request):
-    return render(request, "crudapplication/index.html")
+    userDetails = UserDetails.objects.all()
+    return render(request, "crudapplication/index.html", {'userDetails': userDetails})

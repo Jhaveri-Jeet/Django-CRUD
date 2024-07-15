@@ -9,3 +9,9 @@ class UserDetails(models.Model):
 
     # def __str__(self):
     #     return self.name
+
+class UserMoreDetails(models.Model):
+    user = models.OneToOneField(UserDetails, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=100)
+    date_of_birth = models.DateField()
