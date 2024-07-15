@@ -5,16 +5,16 @@ Welcome to the Django CRUD tutorial! This guide will walk you through creating a
 ## Table of Contents 📚
 
 1. [Setup and Installation](#setup-and-installation-)
-2. [Project and App Structure](#project-and-app-structure-🏗️)
-3. [Creating Views](#creating-views-👁️)
-4. [Setting Up URLs](#setting-up-urls-🔗)
-5. [Templates and Static Files](#templates-and-static-files-🎨)
-6. [Creating Models](#creating-models-🗂️)
-7. [Admin Interface](#admin-interface-🛠️)
-8. [Displaying Data on the Frontend](#displaying-data-on-the-frontend-📄)
-9. [Implementing Relationships](#implementing-relationships-🤝)
-10. [Django Forms](#django-forms-📝)
-11. [Conclusion](#conclusion-🏁)
+2. [Project and App Structure](#project-and-app-structure-)
+3. [Creating Views](#creating-views-)
+4. [Setting Up URLs](#setting-up-urls-)
+5. [Templates and Static Files](#templates-and-static-files-)
+6. [Creating Models](#creating-models-)
+7. [Admin Interface](#admin-interface-)
+8. [Displaying Data on the Frontend](#displaying-data-on-the-frontend-)
+9. [Implementing Relationships](#implementing-relationships-)
+10. [Django Forms](#django-forms-)
+11. [Conclusion](#conclusion-)
 
 ## Setup and Installation 🔧
 
