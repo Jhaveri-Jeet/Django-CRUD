@@ -382,6 +382,7 @@ class Blog(models.Model):
     content = models.TextField()
     tags = models.ManyToManyField(Tag)
 ```
+
 ## Django Forms 📝
 
 Forms are essential for handling user input.
@@ -423,8 +424,7 @@ Use `forms.Form` when you need full control over form fields and processing, esp
 
    ```html
    <form method="post">
-     {% csrf_token %}
-     {{ form.as_p }}
+     {% csrf_token %} {{ form.as_p }}
      <button type="submit">Submit</button>
    </form>
    ```
@@ -484,8 +484,7 @@ Use `forms.ModelForm` when the form is directly tied to a model and you want to 
 
    ```html
    <form method="post" enctype="multipart/form-data">
-     {% csrf_token %}
-     {{ form.as_p }}
+     {% csrf_token %} {{ form.as_p }}
      <button type="submit">Save</button>
    </form>
    ```
@@ -493,18 +492,22 @@ Use `forms.ModelForm` when the form is directly tied to a model and you want to 
 ### Differences Between `forms.Form` and `forms.ModelForm`
 
 - **Use Case:**
+
   - **`forms.Form`**: Use when you need full control over form fields and processing, and the form is not directly tied to a model.
   - **`forms.ModelForm`**: Use when the form is directly tied to a model and you want to create or update model instances.
 
 - **Field Definition:**
+
   - **`forms.Form`**: Manually define each field in the form.
   - **`forms.ModelForm`**: Automatically generates form fields based on the model fields.
 
 - **Validation:**
+
   - **`forms.Form`**: Manually handle validation logic.
   - **`forms.ModelForm`**: Leverages model validation logic, reducing boilerplate code.
 
 - **Saving Data:**
+
   - **`forms.Form`**: Manually handle the saving of data.
   - **`forms.ModelForm`**: Automatically handles saving of model instances.
 
@@ -546,114 +549,10 @@ Using `forms.ModelForm` to create a blog post form:
 
    ```html
    <form method="post">
-     {% csrf_token %}
-     {{ form.as_p }}
+     {% csrf_token %} {{ form.as_p }}
      <button type="submit">Save</button>
    </form>
    ```
-
-## Conclusion 🏁
-
-Congratulations! You have successfully created a CRUD application using Django. This tutorial covered the basics of setting up a Django project, creating models, views, and templates, handling form submissions, and customizing the admin interface. With these skills, you can build more complex applications and continue exploring Django's powerful features.
-
-Feel free to contribute to this repository, report issues, or ask questions. Happy coding! 🎉
-## Django Forms 📝
-
-Forms are essential for handling user input.
-
-### Creating Forms 📑
-
-Create forms to handle user input:
-
-```python
-from django import forms
-from .models import UserDetails
-
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = UserDetails
-        fields = ['name', 'image']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
-        }
-        labels = {
-            'name': 'Full Name',
-            'image': 'Profile Picture',
-        }
-        help_texts = {
-            'name': 'Please enter your full name.',
-            'image': 'Upload a profile picture.',
-        }
-        error_messages = {
-            'name': {
-                'max_length': 'Name is too long.',
-                'required': 'Name is required.',
-            },
-            'image': {
-                'invalid': 'Invalid image format.',
-            },
-        }
-
-```
-
-### Handling Form Submissions 📨
-
-Handle form submissions in views:
-
-```python
-def user_create(request):
-    if request.method == 'POST':
-        form = UserForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('user_list')
-    else:
-        form = UserForm()
-    return render(request, 'user_form.html', {'form': form})
-```
-
-### Displaying Forms in Templates 🖋️
-
-Render forms in templates:
-
-```html
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Save</button>
-</form>
-```
-
-### Example: Blog Post Form 📝
-
-```python
-from django import forms
-from .models import Blog
-
-class BlogForm(forms.ModelForm):
-    class Meta:
-        model = Blog
-        fields = ['title', 'content', 'tags']
-```
-
-```python
-def blog_create(request):
-    if request.method == 'POST':
-        form = BlogForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_list')
-    else:
-        form = BlogForm()
-    return render(request, 'blog_form.html', {'form': form})
-```
-
-```html
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Save</button>
-</form>
-```
 
 ## Conclusion 🏁
 
