@@ -25,44 +25,44 @@ Let's kick off by setting up our development environment and installing the nece
 UV is a faster alternative to pip, built with Rust for efficiency.
 
 1. **Install UV:**
-    ```sh
-    pip install uv
-    ```
+   ```sh
+   pip install uv
+   ```
 2. **Create a Virtual Environment:**
-    ```sh
-    uv venv
-    ```
+   ```sh
+   uv venv
+   ```
 3. **Activate the Virtual Environment:**
-    ```sh
-    .venv/Scripts/Activate
-    ```
+   ```sh
+   .venv/Scripts/Activate
+   ```
 4. **Deactivate the Virtual Environment:**
-    ```sh
-    deactivate
-    ```
+   ```sh
+   deactivate
+   ```
 5. **Install Django:**
-    ```sh
-    uv pip install Django
-    ```
+   ```sh
+   uv pip install Django
+   ```
 
 ### Setting Up the Django Project 🌟
 
 1. **Start a New Project:**
-    ```sh
-    django-admin startproject crud
-    ```
+   ```sh
+   django-admin startproject crud
+   ```
 2. **Navigate to the Project Directory:**
-    ```sh
-    cd crud
-    ```
+   ```sh
+   cd crud
+   ```
 3. **Run the Server:**
-    ```sh
-    python manage.py runserver
-    ```
-    Optionally, run the server on a specific port:
-    ```sh
-    python manage.py runserver [Port Number]
-    ```
+   ```sh
+   python manage.py runserver
+   ```
+   Optionally, run the server on a specific port:
+   ```sh
+   python manage.py runserver [Port Number]
+   ```
 
 ## Project and App Structure 🏗️
 
@@ -77,16 +77,16 @@ Understanding the structure of a Django project is crucial for efficient develop
 ### Creating a Django App 🛠️
 
 1. **Create an App:**
-    ```sh
-    python manage.py startapp appname
-    ```
+   ```sh
+   python manage.py startapp appname
+   ```
 2. **Configure the App in `settings.py`:**
-    ```python
-    INSTALLED_APPS = [
-        ...
-        'appname',
-    ]
-    ```
+   ```python
+   INSTALLED_APPS = [
+       ...
+       'appname',
+   ]
+   ```
 
 ### Changing the Database 🔄
 
@@ -118,18 +118,19 @@ URLs are the entry points to your views.
 ### Configuring URL Patterns 🔍
 
 1. **Import Views:**
-    ```python
-    from . import views
-    ```
+   ```python
+   from . import views
+   ```
 2. **Add URL Paths in `urls.py`:**
-    ```python
-    from django.urls import path
-    from . import views
 
-    urlpatterns = [
-        path('', views.home, name='home'),
-    ]
-    ```
+   ```python
+   from django.urls import path
+   from . import views
+
+   urlpatterns = [
+       path('', views.home, name='home'),
+   ]
+   ```
 
 ### Using Namespaces 🌐
 
@@ -142,37 +143,42 @@ Templates and static files are crucial for rendering HTML and serving CSS, JavaS
 ### Creating Templates 🖌️
 
 1. **Create a `templates` Folder:**
-    - Create a folder named `templates` in the root directory.
-    - Add HTML files in the `templates` folder.
+
+   - Create a folder named `templates` in the root directory.
+   - Add HTML files in the `templates` folder.
 
 2. **Render Templates in Views:**
-    ```python
-    from django.shortcuts import render
 
-    def home(request):
-        return render(request, 'index.html')
-    ```
+   ```python
+   from django.shortcuts import render
+
+   def home(request):
+       return render(request, 'index.html')
+   ```
 
 ### Managing Static Files 📁
 
 1. **Create a `static` Folder:**
-    - Create a folder named `static` in the root directory.
-    - Add subfolders for CSS, JS, and other static files.
+
+   - Create a folder named `static` in the root directory.
+   - Add subfolders for CSS, JS, and other static files.
 
 2. **Link Static Files in Templates:**
-    ```html
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    ```
+
+   ```html
+   {% load static %}
+   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+   ```
 
 3. **Configure Static and Media Files in `settings.py`:**
-    ```python
-    STATIC_URL = 'static/'
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-    MEDIA_URL = 'media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    ```
+   ```python
+   STATIC_URL = 'static/'
+   STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+   MEDIA_URL = 'media/'
+   MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+   ```
 
 ### Example: Adding a CSS File 💅
 
@@ -180,8 +186,8 @@ Create a file named `style.css` under the `static/css` directory:
 
 ```css
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
 }
 ```
 
@@ -190,15 +196,15 @@ Link the CSS file in your template:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
     <h1>Welcome to Django CRUD Tutorial</h1>
-</body>
+  </body>
 </html>
 ```
 
@@ -221,6 +227,7 @@ class UserDetails(models.Model):
 ### Installing Pillow for Image Fields 🖼️
 
 Install Pillow for handling image fields:
+
 ```sh
 pip install Pillow
 ```
@@ -228,13 +235,13 @@ pip install Pillow
 ### Running Migrations ⚙️
 
 1. **Create Migrations:**
-    ```sh
-    python manage.py makemigrations
-    ```
+   ```sh
+   python manage.py makemigrations
+   ```
 2. **Apply Migrations:**
-    ```sh
-    python manage.py migrate
-    ```
+   ```sh
+   python manage.py migrate
+   ```
 
 ### Example: Adding a Blog Model 📝
 
@@ -264,6 +271,7 @@ Django's admin interface is a powerful tool for managing your application's data
 ### Creating a Superuser 🧑‍💻
 
 Create a superuser to access the admin panel:
+
 ```sh
 python manage.py createsuperuser
 ```
@@ -325,7 +333,7 @@ Use Jinja for loops to display data:
 
 ```html
 {% for user in users %}
-    <p>{{ user.name }}</p>
+<p>{{ user.name }}</p>
 {% endfor %}
 ```
 
@@ -339,9 +347,9 @@ def blog_list(request):
 
 ```html
 {% for blog in blogs %}
-    <h2>{{ blog.title }}</h2>
-    <p>{{ blog.content }}</p>
-    <small>Published on: {{ blog.published_date }}</small>
+<h2>{{ blog.title }}</h2>
+<p>{{ blog.content }}</p>
+<small>Published on: {{ blog.published_date }}</small>
 {% endfor %}
 ```
 
@@ -391,6 +399,28 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = UserDetails
         fields = ['name', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+        }
+        labels = {
+            'name': 'Full Name',
+            'image': 'Profile Picture',
+        }
+        help_texts = {
+            'name': 'Please enter your full name.',
+            'image': 'Upload a profile picture.',
+        }
+        error_messages = {
+            'name': {
+                'max_length': 'Name is too long.',
+                'required': 'Name is required.',
+            },
+            'image': {
+                'invalid': 'Invalid image format.',
+            },
+        }
+
 ```
 
 ### Handling Form Submissions 📨
@@ -415,9 +445,8 @@ Render forms in templates:
 
 ```html
 <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Save</button>
 </form>
 ```
 
@@ -447,9 +476,8 @@ def blog_create(request):
 
 ```html
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Save</button>
 </form>
 ```
 
