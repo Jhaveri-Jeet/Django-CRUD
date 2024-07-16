@@ -15,3 +15,8 @@ class UserMoreDetails(models.Model):
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     date_of_birth = models.DateField()
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
