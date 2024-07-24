@@ -1,6 +1,6 @@
 # Django CRUD Tutorial 🚀
 
-Welcome to the Django CRUD tutorial! This guide will walk you through creating a simple CRUD (Create, Read, Update, Delete) application using Django, from setting up your environment to deploying a functional web application.
+Welcome to the Django CRUD tutorial! This guide will take you through creating a simple CRUD (Create, Read, Update, Delete) application using Django. We'll cover everything from setting up your environment to deploying a fully functional web application.
 
 ## Table of Contents 📚
 
@@ -17,32 +17,40 @@ Welcome to the Django CRUD tutorial! This guide will walk you through creating a
 11. [Working with URL Parameters](#working-with-url-parameters-)
 12. [Customizing the User Model](#customizing-the-user-model-)
 13. [Adding Update and Delete Functionality](#adding-update-and-delete-functionality-)
-14. [Conclusion](#conclusion-)
+14. [Adding Pagination](#adding-pagination-)
+15. [Adding Search Functionality](#adding-search-functionality-)
+16. [Conclusion](#conclusion-)
 
 ## Setup and Installation 🔧
 
-Let's kick off by setting up our development environment and installing the necessary packages.
-
 ### Using UV for Package Installation ⚡
 
-UV is a faster alternative to pip, built with Rust for efficiency.
+UV is a modern, faster alternative to pip, built with Rust for efficiency.
 
 1. **Install UV:**
+
    ```sh
    pip install uv
    ```
+
 2. **Create a Virtual Environment:**
+
    ```sh
    uv venv
    ```
+
 3. **Activate the Virtual Environment:**
+
    ```sh
    .venv/Scripts/Activate
    ```
+
 4. **Deactivate the Virtual Environment:**
+
    ```sh
    deactivate
    ```
+
 5. **Install Django:**
    ```sh
    uv pip install Django
@@ -51,13 +59,17 @@ UV is a faster alternative to pip, built with Rust for efficiency.
 ### Setting Up the Django Project 🌟
 
 1. **Start a New Project:**
+
    ```sh
    django-admin startproject crud
    ```
+
 2. **Navigate to the Project Directory:**
+
    ```sh
    cd crud
    ```
+
 3. **Run the Server:**
    ```sh
    python manage.py runserver
@@ -69,20 +81,22 @@ UV is a faster alternative to pip, built with Rust for efficiency.
 
 ## Project and App Structure 🏗️
 
-Understanding the structure of a Django project is crucial for efficient development.
+Understanding the structure of a Django project is essential for effective development.
 
 ### Project Structure Overview 🗂️
 
 - **`manage.py`**: The entry point for the project, containing environment variables and settings.
-- **Root Level**: Contains the project folder (`crud`), which houses settings, URLs, and WSGI files.
-- **Application Level**: Contains individual apps that handle different aspects of the project.
+- **Root Level**: Contains the project folder (`crud`), which includes settings, URLs, and WSGI files.
+- **Application Level**: Houses individual apps that handle different aspects of the project.
 
 ### Creating a Django App 🛠️
 
 1. **Create an App:**
+
    ```sh
    python manage.py startapp appname
    ```
+
 2. **Configure the App in `settings.py`:**
    ```python
    INSTALLED_APPS = [
@@ -93,11 +107,11 @@ Understanding the structure of a Django project is crucial for efficient develop
 
 ### Changing the Database 🔄
 
-Django supports multiple databases like PostgreSQL, MySQL, and SQLite. Modify the database settings in `settings.py` to switch databases.
+Django supports various databases like PostgreSQL, MySQL, and SQLite. Modify the database settings in `settings.py` to switch databases.
 
 ## Creating Views 👁️
 
-Views are essential for handling requests and returning responses.
+Views handle requests and return responses.
 
 ### Creating the `views.py` File 📄
 
@@ -105,6 +119,7 @@ Define views in `views.py`:
 
 ```python
 from django.http import HttpResponse
+from django.shortcuts import render
 
 def home(request):
     return HttpResponse("Hello World")
@@ -116,14 +131,16 @@ Create additional functions in `views.py` as needed.
 
 ## Setting Up URLs 🔗
 
-URLs are the entry points to your views.
+URLs are entry points to your views.
 
 ### Configuring URL Patterns 🔍
 
 1. **Import Views:**
+
    ```python
    from . import views
    ```
+
 2. **Add URL Paths in `urls.py`:**
 
    ```python
@@ -141,7 +158,7 @@ Use the `name` parameter for URL patterns to refer to them in templates and view
 
 ## Templates and Static Files 🎨
 
-Templates and static files are crucial for rendering HTML and serving CSS, JavaScript, and images.
+Templates and static files are essential for rendering HTML and serving CSS, JavaScript, and images.
 
 ### Creating Templates 🖌️
 
@@ -238,9 +255,11 @@ pip install Pillow
 ### Running Migrations ⚙️
 
 1. **Create Migrations:**
+
    ```sh
    python manage.py makemigrations
    ```
+
 2. **Apply Migrations:**
    ```sh
    python manage.py migrate
@@ -296,8 +315,8 @@ Customize the admin display:
 
 ```python
 class AdminPaneDisplayUserDetails(admin.ModelAdmin):
-    list_display = ('name', 'email', 'password', 'image')
-    search_fields = ('name', 'email', 'password', 'image')
+    list_display = ('name', 'image')
+    search_fields = ('name', 'image')
 
 admin.site.register(UserDetails, AdminPaneDisplayUserDetails)
 ```
@@ -332,7 +351,7 @@ def user_list(request):
 
 ### Displaying Data in Templates 🌐
 
-Use Jinja for loops to display data:
+Use Django's template language to loop through and display data:
 
 ```html
 {% for user in users %}
@@ -352,320 +371,399 @@ def blog_list(request):
 {% for blog in blogs %}
 <h2>{{ blog.title }}</h2>
 <p>{{ blog.content }}</p>
-<small>Published on: {{ blog.published_date }}</small>
+<small>Published on: {{ blog.published _date }}</small>
 {% endfor %}
 ```
 
-## Implementing Relationships 🤝
+## Implementing Relationships 🔗
 
-Django supports various types of relationships.
+Create relationships between models using ForeignKey and ManyToManyField.
 
-### Defining Relationships in Models 💑
-
-Define One-to-One, One-to
-
--Many, and Many-to-Many relationships:
-
-```python
-class Author(models.Model):
-    name = models.CharField(max_length=100)
-
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-```
-
-### Example: Adding Comments to Blog Posts 📝
+### Example: Adding a ForeignKey Relationship 📚
 
 ```python
 class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    content = models.TextField()
-    author = models.CharField(max_length=100)
+    text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+```
+
+### Example: Adding a ManyToManyField 📚
+
+```python
+class Tag(models.Model):
+    name = models.CharField(max_length=50)
+    blogs = models.ManyToManyField(Blog, related_name='tags')
 ```
 
 ## Django Forms 📝
 
-Forms are essential for handling user input.
+Forms handle user input and validation.
 
-### Creating Forms 🖊️
+### Creating a Form Class 📋
 
-Create a form in `forms.py`:
+1. **Define a Form in `forms.py`:**
 
-```python
-from django import forms
-from .models import UserDetails
+   ```python
+   from django import forms
+   from .models import UserDetails
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = UserDetails
-        fields = ['name', 'email', 'password', 'image']
-```
+   class UserForm(forms.ModelForm):
+       class Meta:
+           model = UserDetails
+           fields = ['name', 'image']
+   ```
 
-### Rendering Forms in Templates 📄
+2. **Use the Form in Views:**
 
-Render forms in templates:
+   ```python
+   from .forms import UserForm
 
-```html
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Submit</button>
-</form>
-```
+   def create_user(request):
+       if request.method == 'POST':
+           form = UserForm(request.POST, request.FILES)
+           if form.is_valid():
+               form.save()
+               return redirect('user_list')
+       else:
+           form = UserForm()
+       return render(request, 'user_form.html', {'form': form})
+   ```
 
-### Handling Form Submissions 🚀
+3. **Display the Form in Templates:**
 
-Handle form submissions in views:
+   ```html
+   <form method="post" enctype="multipart/form-data">
+     {% csrf_token %} {{ form.as_p }}
+     <button type="submit">Submit</button>
+   </form>
+   ```
 
-```python
-def add_user(request):
-    if request.method == "POST":
-        form = UserForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('user_list')
-    else:
-        form = UserForm()
-    return render(request, 'add_user.html', {'form': form})
-```
+## Working with URL Parameters 🔍
 
-### Example: Creating a Blog Post Form 📝
+Handle dynamic URLs and pass parameters to views.
 
-```python
-class BlogForm(forms.ModelForm):
-    class Meta:
-        model = Blog
-        fields = ['title', 'content']
-```
+### Example: Handling URL Parameters 🌐
 
-```python
-def add_blog(request):
-    if request.method == "POST":
-        form = BlogForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_list')
-    else:
-        form = BlogForm()
-    return render(request, 'add_blog.html', {'form': form})
-```
+1. **Define URL Pattern with Parameter:**
 
-## Working with URL Parameters 🔗
+   ```python
+   from django.urls import path
+   from . import views
 
-URL parameters are useful for passing data to views.
+   urlpatterns = [
+       path('user/<int:id>/', views.user_detail, name='user_detail'),
+   ]
+   ```
 
-### Using URL Parameters 🔄
+2. **Create View Function to Handle Parameter:**
 
-Define URL parameters in `urls.py`:
+   ```python
+   def user_detail(request, id):
+       user = UserDetails.objects.get(id=id)
+       return render(request, 'user_detail.html', {'user': user})
+   ```
 
-```python
-urlpatterns = [
-    path('user/<int:id>/', views.user_detail, name='user_detail'),
-]
-```
+3. **Use Parameter in Template:**
 
-### Handling URL Parameters in Views 🌐
+   ```html
+   <h1>{{ user.name }}</h1>
+   <img src="{{ user.image.url }}" alt="{{ user.name }}" />
+   ```
 
-Retrieve URL parameters in views:
+## Customizing the User Model 👤
 
-```python
-def user_detail(request, id):
-    user = get_object_or_404(UserDetails, id=id)
-    return render(request, 'user_detail.html', {'user': user})
-```
+Customize Django’s built-in User model to fit your needs.
 
-### Example: Displaying a Single Blog Post 📄
+### Extending the User Model with a Profile 🛠️
 
-```python
-def blog_detail(request, id):
-    blog = get_object_or_404(Blog, id=id)
-    return render(request, 'blog_detail.html', {'blog': blog})
-```
+1. **Create a Profile Model:**
 
-## Customizing the User Model 👥
+   ```python
+   from django.contrib.auth.models import User
+   from django.db import models
 
-Customize the default user model to fit your needs.
+   class Profile(models.Model):
+       user = models.OneToOneField(User, on_delete=models.CASCADE)
+       bio = models.TextField()
+   ```
 
-### Extending the User Model 🛠️
+2. **Create a Signal to Automatically Create a Profile:**
 
-Create a custom user model:
+   ```python
+   from django.db.models.signals import post_save
+   from django.dispatch import receiver
 
-```python
-from django.contrib.auth.models import AbstractUser
+   @receiver(post_save, sender=User)
+   def create_user_profile(sender, instance, created, **kwargs):
+       if created:
+           Profile.objects.create(user=instance)
+   ```
 
-class CustomUser(AbstractUser):
-    phone = models.CharField(max_length=15)
-```
+3. **Update the User Model in Forms and Views:**
 
-### Updating `settings.py` 🔄
+   ```python
+   from django import forms
+   from django.contrib.auth.models import User
+   from .models import Profile
 
-Update the `AUTH_USER_MODEL` setting:
-
-```python
-AUTH_USER_MODEL = 'appname.CustomUser'
-```
-
-### Creating User Forms 📝
-
-Create forms for user registration and authentication.
-
-### Example: Custom User Registration Form 📝
-
-```python
-from django import forms
-from .models import CustomUser
-
-class CustomUserForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'password', 'email', 'phone']
-```
+   class UserProfileForm(forms.ModelForm):
+       class Meta:
+           model = Profile
+           fields = ['bio']
+   ```
 
 ## Adding Update and Delete Functionality 🔄
 
-Enhance your CRUD application by adding update and delete features.
+Implement the ability to update and delete records.
 
-### Update Functionality 🛠️
+### Updating Records 🖋️
 
-1. **Update View:**
-
-   - Add a view function in `views.py` for updating user details.
+1. **Create a View to Handle Updates:**
 
    ```python
-   from django.shortcuts import render, get_object_or_404, redirect
-   from .models import UserDetails
-   from .forms import UserForm
-
    def update_user(request, id):
-       user = get_object_or_404(UserDetails, id=id)
-       if request.method == "POST":
+       user = UserDetails.objects.get(id=id)
+       if request.method == 'POST':
            form = UserForm(request.POST, request.FILES, instance=user)
            if form.is_valid():
                form.save()
                return redirect('user_list')
        else:
            form = UserForm(instance=user)
-       return render(request, 'update_user.html', {'form': form})
+       return render(request, 'user_form.html', {'form': form})
    ```
 
-2. **Update Template:**
-
-   - Create an `update_user.html` template.
-
-   ```html
-   <h2>Update User</h2>
-   <form method="post" enctype="multipart/form-data">
-     {% csrf_token %} {{ form.as_p }}
-     <button type="submit">Update</button>
-   </form>
-   ```
-
-3. **Update URL:**
-
-   - Add the URL pattern for the update view in `urls.py`.
+2. **Update the URL Pattern:**
 
    ```python
-   urlpatterns = [
-       ...
-       path('user/update/<int:id>/', views.update_user, name='update_user'),
-   ]
+   path('user/update/<int:id>/', views.update_user, name='update_user'),
    ```
 
-### Delete Functionality 🗑️
+### Deleting Records 🗑️
 
-1. **Delete View:**
-
-   - Add a view function in `views.py` for deleting user details.
+1. **Create a View to Handle Deletion:**
 
    ```python
-   from django.shortcuts import render, get_object_or_404, redirect
-   from .models import UserDetails
-
    def delete_user(request, id):
-       user = get_object_or_404(UserDetails, id=id)
-       if request.method == "POST":
+       user = UserDetails.objects.get(id=id)
+       if request.method == 'POST':
            user.delete()
            return redirect('user_list')
-       return render(request, 'delete_user.html', {'user': user})
+       return render(request, 'confirm_delete.html', {'user': user})
    ```
 
-2. **Delete Template:**
-
-   - Create a `delete_user.html` template.
-
-   ```html
-   <h2>Are you sure you want to delete this user?</h2>
-   <form method="post">
-     {% csrf_token %}
-     <button type="submit">Delete</button>
-   </form>
-   ```
-
-3. **Delete URL:**
-
-   - Add the URL pattern for the delete view in `urls.py`.
+2. **Update the URL Pattern:**
 
    ```python
-   urlpatterns = [
-       ...
-       path('user/delete/<int:id>/', views.delete_user, name='delete_user'),
-   ]
+   path('user/delete/<int:id>/', views.delete_user, name='delete_user'),
    ```
 
-### Example: Update and Delete Blog Posts 📝
+## Adding Pagination 📜
+
+Pagination splits large datasets into smaller pages for better usability.
+
+### Implementing Pagination in Views 📚
+
+1. **Update Your View Function:**
+
+   ```python
+   from django.core.paginator import Paginator
+
+   def user_list(request):
+       user_list = UserDetails.objects.all()
+       paginator = Paginator(user_list, 10)  # Show 10 users per page
+       page_number = request.GET.get('page')
+       page_obj = paginator.get_page(page_number)
+       return render(request, 'user_list.html', {'page_obj': page_obj})
+   ```
+
+2. **Update Your Template:**
+
+   ```html
+   {% for user in page_obj %}
+   <p>{{ user.name }}</p>
+   {% endfor %}
+
+   <div class="pagination">
+     <span class="step-links">
+       {% if page_obj.has_previous %}
+       <a href="?page=1">&laquo; first</a>
+       <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+       {% endif %}
+
+       <span class="current">
+         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+       </span>
+
+       {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">next</a>
+       <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+       {% endif %}
+     </span>
+   </div>
+   ```
+
+### Example: Adding Pagination to Blog Posts 📄
 
 ```python
-# views.py
-from .models import Blog
-from .forms import BlogForm
+def blog_list(request):
+    blog_list = Blog.objects.all()
+    paginator = Paginator(blog_list, 5)  # Show 5 blogs per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'blog_list.html', {'page_obj': page_obj})
+```
 
-def update_blog(request, id):
-    blog = get_object_or_404(Blog, id=id)
-    if request.method == "POST":
-        form = BlogForm(request.POST, instance=blog)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_list')
+```html
+<!-- blog_list.html -->
+{% for blog in page_obj %}
+<h2>{{ blog.title }}</h2>
+<p>{{ blog.content }}</p>
+<small>Published on: {{ blog.published_date }}</small>
+{% endfor %}
+
+<div class="pagination">
+  <span class="step-links">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">&laquo; first</a>
+    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+```
+
+## Adding Search Functionality 🔍
+
+Search functionality enables users to find specific items quickly.
+
+### Implementing Search in Views 🔎
+
+1. **Update Your View Function:**
+
+   ```python
+   from django.db.models import Q
+
+   def user_list(request):
+       query = request.GET.get('q')
+       if query:
+           user_list = UserDetails.objects.filter(Q(name__icontains=query) | Q(email__icontains=query))
+       else:
+           user_list = UserDetails.objects.all()
+
+       paginator = Paginator(user_list, 10)
+       page_number = request.GET.get('page')
+       page_obj = paginator.get_page(page_number)
+       return render(request, 'user_list.html', {'page_obj': page_obj, 'query': query})
+   ```
+
+2. **Update Your Template:**
+
+   ```html
+   <form method="get" action="{% url 'user_list' %}">
+       <input type="text" name="q" value="{{ query }}" placeholder="Search users...">
+       <button type="submit">Search</button>
+   </form>
+
+   {% for user in page_obj %}
+   <p>{{ user.name }}</p>
+   {% endfor %}
+
+   <div class="pagination">
+       <span class="step-links">
+           {% if page_obj.has_previous %}
+               <a href="?page=1&q={{ query }}">&laquo; first</a>
+               <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}">previous</a>
+           {% endif %}
+
+           <span class="current">
+               Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+           </span>
+
+           {% if page_obj.has_next %}
+               <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">next</a>
+               <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}">last &raquo;</a>
+           {% endif %}
+       </
+   ```
+
+span>
+
+   </div>
+   ```
+
+### Example: Adding Search to Blog Posts 🔍
+
+```python
+def blog_list(request):
+    query = request.GET.get('q')
+    if query:
+        blog_list = Blog.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
     else:
-        form = BlogForm(instance=blog)
-    return render(request, 'update_blog.html', {'form': form})
+        blog_list = Blog.objects.all()
 
-def delete_blog(request, id):
-    blog = get_object_or_404(Blog, id=id)
-    if request.method == "POST":
-        blog.delete()
-        return redirect('blog_list')
-    return render(request, 'delete_blog.html', {'blog': blog})
-```
-
-```python
-# urls.py
-urlpatterns = [
-    ...
-    path('blog/update/<int:id>/', views.update_blog, name='update_blog'),
-    path('blog/delete/<int:id>/', views.delete_blog, name='delete_blog'),
-]
+    paginator = Paginator(blog_list, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'blog_list.html', {'page_obj': page_obj, 'query': query})
 ```
 
 ```html
-<!-- update_blog.html -->
-<h2>Update Blog</h2>
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Update</button>
+<!-- blog_list.html -->
+<form method="get" action="{% url 'blog_list' %}">
+  <input
+    type="text"
+    name="q"
+    value="{{ query }}"
+    placeholder="Search blogs..."
+  />
+  <button type="submit">Search</button>
 </form>
-```
 
-```html
-<!-- delete_blog.html -->
-<h2>Are you sure you want to delete this blog post?</h2>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Delete</button>
-</form>
+{% for blog in page_obj %}
+<h2>{{ blog.title }}</h2>
+<p>{{ blog.content }}</p>
+<small>Published on: {{ blog.published_date }}</small>
+{% endfor %}
+
+<div class="pagination">
+  <span class="step-links">
+    {% if page_obj.has_previous %}
+    <a href="?page=1&q={{ query }}">&laquo; first</a>
+    <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}"
+      >previous</a
+    >
+    {% endif %}
+
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}"
+      >last &raquo;</a
+    >
+    {% endif %}
+  </span>
+</div>
 ```
 
 ## Conclusion 🎉
 
-Congratulations! You've successfully built a Django CRUD application with create, read, update, and delete functionality. This tutorial covered the basics, and now you can expand on it to build more complex applications. Keep exploring Django's documentation and features to enhance your skills further. Happy coding!
+Congratulations! You've built a complete CRUD application with Django, including features like pagination and search functionality. Continue to explore Django's extensive documentation and community resources to enhance your skills and build more complex applications.
+
+Happy coding! 🖥️🚀
+
+---
+
+Feel free to adjust any parts to better suit your audience or specific requirements!
