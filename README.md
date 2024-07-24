@@ -670,8 +670,13 @@ Search functionality enables users to find specific items quickly.
 
    ```html
    <form method="get" action="{% url 'user_list' %}">
-       <input type="text" name="q" value="{{ query }}" placeholder="Search users...">
-       <button type="submit">Search</button>
+     <input
+       type="text"
+       name="q"
+       value="{{ query }}"
+       placeholder="Search users..."
+     />
+     <button type="submit">Search</button>
    </form>
 
    {% for user in page_obj %}
@@ -679,25 +684,25 @@ Search functionality enables users to find specific items quickly.
    {% endfor %}
 
    <div class="pagination">
-       <span class="step-links">
-           {% if page_obj.has_previous %}
-               <a href="?page=1&q={{ query }}">&laquo; first</a>
-               <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}">previous</a>
-           {% endif %}
+     <span class="step-links">
+       {% if page_obj.has_previous %}
+       <a href="?page=1&q={{ query }}">&laquo; first</a>
+       <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}"
+         >previous</a
+       >
+       {% endif %}
 
-           <span class="current">
-               Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-           </span>
+       <span class="current">
+         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+       </span>
 
-           {% if page_obj.has_next %}
-               <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">next</a>
-               <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}">last &raquo;</a>
-           {% endif %}
-       </
-   ```
-
-span>
-
+       {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">next</a>
+       <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}"
+         >last &raquo;</a
+       >
+       {% endif %}
+     </span>
    </div>
    ```
 
@@ -763,7 +768,3 @@ def blog_list(request):
 Congratulations! You've built a complete CRUD application with Django, including features like pagination and search functionality. Continue to explore Django's extensive documentation and community resources to enhance your skills and build more complex applications.
 
 Happy coding! 🖥️🚀
-
----
-
-Feel free to adjust any parts to better suit your audience or specific requirements!
