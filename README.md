@@ -1,3 +1,7 @@
+Sure! Let's enhance your Django CRUD tutorial by including details on sending data through the GET method (via URL parameters) and changing the user model in Django.
+
+---
+
 # Django CRUD Tutorial 🚀
 
 Welcome to the Django CRUD tutorial! This guide will walk you through creating a simple CRUD (Create, Read, Update, Delete) application using Django, from setting up your environment to deploying a functional web application.
@@ -14,7 +18,9 @@ Welcome to the Django CRUD tutorial! This guide will walk you through creating a
 8. [Displaying Data on the Frontend](#displaying-data-on-the-frontend-)
 9. [Implementing Relationships](#implementing-relationships-)
 10. [Django Forms](#django-forms-)
-11. [Conclusion](#conclusion-)
+11. [Working with URL Parameters](#working-with-url-parameters-)
+12. [Customizing the User Model](#customizing-the-user-model-)
+13. [Conclusion](#conclusion-)
 
 ## Setup and Installation 🔧
 
@@ -357,205 +363,272 @@ def blog_list(request):
 
 Django supports various types of relationships.
 
-### Defining Relationships in Models 💑
+### Def
 
-Define One-to-One, One-to-Many, and Many-to-Many relationships:
+ining Relationships 💍
+
+Define relationships in models:
 
 ```python
-class UserMoreDetails(models.Model):
-    user = models.OneToOne
+class Author(models.Model):
+    name = models.CharField(max_length=100)
 
-Field(UserDetails, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=15)
-    address = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
 ```
 
-### Example: Many-to-Many Relationship with Tags 🏷️
+### Querying Relationships 🔍
+
+Query related objects:
 
 ```python
-class Tag(models.Model):
-    name = models.CharField(max_length=50)
+def author_books(request, author_id):
+    author = Author.objects.get(pk=author_id)
+    books = author.book_set.all()
+    return render(request, 'author_books.html', {'author': author, 'books': books})
+```
 
-class Blog(models.Model):
+### Displaying Related Data in Templates 🌐
+
+Display related data:
+
+```html
+<h2>{{ author.name }}</h2>
+<ul>
+  {% for book in books %}
+  <li>{{ book.title }}</li>
+  {% endfor %}
+</ul>
+```
+
+### Example: Many-to-Many Relationship 👫
+
+```python
+class Student(models.Model):
+    name = models.CharField(max_length=100)
+
+class Course(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField()
-    tags = models.ManyToManyField(Tag)
+    students = models.ManyToManyField(Student)
 ```
 
 ## Django Forms 📝
 
-Forms are essential for handling user input.
+Forms are crucial for user input.
 
-### Creating Forms 📑
+### Creating Forms 📝
 
-Django provides two types of forms: `forms.Form` and `forms.ModelForm`. Here, we'll explore both.
+Create forms in `forms.py`:
 
-### `forms.Form` Example
+```python
+from django import forms
+from .models import UserDetails
 
-Use `forms.Form` when you need full control over form fields and processing, especially when the form is not directly tied to a model.
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = UserDetails
+        fields = ['name', 'email', 'password', 'image']
+```
 
-1. **Define the Form:**
+### Handling Form Submissions 📨
 
-   ```python
-   from django import forms
+Handle form submissions in views:
 
-   class NameForm(forms.Form):
-       your_name = forms.CharField(label="Your name", max_length=100)
-   ```
+```python
+def create_user(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('user_list')
+    else:
+        form = UserForm()
+    return render(request, 'create_user.html', {'form': form})
+```
 
-2. **Handling Form Submissions in Views:**
+### Displaying Forms in Templates 🌐
 
-   ```python
-   def name_form_view(request):
-       if request.method == 'POST':
-           form = NameForm(request.POST)
-           if form.is_valid():
-               # Process the data
-               name = form.cleaned_data['your_name']
-               # Do something with the name
-               return HttpResponse(f"Hello, {name}")
-       else:
-           form = NameForm()
-       return render(request, 'name_form.html', {'form': form})
-   ```
+Display forms in templates:
 
-3. **Rendering Forms in Templates:**
+```html
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Create User</button>
+</form>
+```
 
-   ```html
-   <form method="post">
-     {% csrf_token %} {{ form.as_p }}
-     <button type="submit">Submit</button>
-   </form>
-   ```
+### Example: Contact Form 📨
 
-### `forms.ModelForm` Example
+```python
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
+```
 
-Use `forms.ModelForm` when the form is directly tied to a model and you want to save or update model instances.
+```python
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            return redirect('thank_you')
+    else:
+        form = ContactForm()
+    return render(request, 'contact.html', {'form': form})
+```
 
-1. **Define the Form:**
+## Working with URL Parameters 🔗
 
-   ```python
-   from django import forms
-   from .models import UserDetails
+URL parameters are useful for dynamic views and passing data through URLs.
 
-   class UserForm(forms.ModelForm):
-       class Meta:
-           model = UserDetails
-           fields = ['name', 'image']
-           widgets = {
-               'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-               'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
-           }
-           labels = {
-               'name': 'Full Name',
-               'image': 'Profile Picture',
-           }
-           help_texts = {
-               'name': 'Please enter your full name.',
-               'image': 'Upload a profile picture.',
-           }
-           error_messages = {
-               'name': {
-                   'max_length': 'Name is too long.',
-                   'required': 'Name is required.',
-               },
-               'image': {
-                   'invalid': 'Invalid image format.',
-               },
-           }
-   ```
+### Using Path Parameters 🌐
 
-2. **Handling Form Submissions in Views:**
+Capture parameters in URLs:
 
-   ```python
-   def user_create(request):
-       if request.method == 'POST':
-           form = UserForm(request.POST, request.FILES)
-           if form.is_valid():
-               form.save()
-               return redirect('user_list')
-       else:
-           form = UserForm()
-       return render(request, 'user_form.html', {'form': form})
-   ```
+```python
+from django.urls import path
+from . import views
 
-3. **Rendering Forms in Templates:**
+urlpatterns = [
+    path('user/<int:id>/', views.user_detail, name='user_detail'),
+]
+```
 
-   ```html
-   <form method="post" enctype="multipart/form-data">
-     {% csrf_token %} {{ form.as_p }}
-     <button type="submit">Save</button>
-   </form>
-   ```
+Handle the parameters in views:
 
-### Differences Between `forms.Form` and `forms.ModelForm`
+```python
+def user_detail(request, id):
+    user = UserDetails.objects.get(id=id)
+    return render(request, 'user_detail.html', {'user': user})
+```
 
-- **Use Case:**
+### Example: Search Functionality 🔍
 
-  - **`forms.Form`**: Use when you need full control over form fields and processing, and the form is not directly tied to a model.
-  - **`forms.ModelForm`**: Use when the form is directly tied to a model and you want to create or update model instances.
+Capture search parameters:
 
-- **Field Definition:**
+```python
+def search(request):
+    query = request.GET.get('q')
+    results = UserDetails.objects.filter(name__icontains=query)
+    return render(request, 'search_results.html', {'results': results})
+```
 
-  - **`forms.Form`**: Manually define each field in the form.
-  - **`forms.ModelForm`**: Automatically generates form fields based on the model fields.
+### Displaying Search Results 🌐
 
-- **Validation:**
+```html
+<form method="get" action="{% url 'search' %}">
+  <input type="text" name="q" placeholder="Search users..." />
+  <button type="submit">Search</button>
+</form>
 
-  - **`forms.Form`**: Manually handle validation logic.
-  - **`forms.ModelForm`**: Leverages model validation logic, reducing boilerplate code.
+{% for user in results %}
+<p>{{ user.name }}</p>
+{% endfor %}
+```
 
-- **Saving Data:**
+## Customizing the User Model 🧑‍💻
 
-  - **`forms.Form`**: Manually handle the saving of data.
-  - **`forms.ModelForm`**: Automatically handles saving of model instances.
+Django allows you to customize the user model to suit your needs.
 
-- **Boilerplate Code:**
-  - **`forms.Form`**: Requires more boilerplate code to handle fields, validation, and saving data.
-  - **`forms.ModelForm`**: Reduces boilerplate code by leveraging model fields and validation.
+### Creating a Custom User Model 📝
 
-### Example: Blog Post Form 📝
+Create a custom user model in `models.py`:
 
-Using `forms.ModelForm` to create a blog post form:
+```python
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-1. **Define the Form:**
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-   ```python
-   from django import forms
-   from .models import Blog
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
 
-   class BlogForm(forms.ModelForm):
-       class Meta:
-           model = Blog
-           fields = ['title', 'content', 'tags']
-   ```
+class CustomUser(AbstractBaseUser):
+    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-2. **Handling Form Submissions in Views:**
+    objects = CustomUserManager()
 
-   ```python
-   def blog_create(request):
-       if request.method == 'POST':
-           form = BlogForm(request.POST)
-           if form.is_valid():
-               form.save()
-               return redirect('blog_list')
-       else:
-           form = BlogForm()
-       return render(request, 'blog_form.html', {'form': form})
-   ```
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']
+```
 
-3. **Rendering Forms in Templates:**
+### Updating Settings ⚙️
 
-   ```html
-   <form method="post">
-     {% csrf_token %} {{ form.as_p }}
-     <button type="submit">Save</button>
-   </form>
-   ```
+Update settings to use the custom user model:
 
-## Conclusion 🏁
+```python
+AUTH_USER_MODEL = 'appname.CustomUser'
+```
 
-Congratulations! You have successfully created a CRUD application using Django. This tutorial covered the basics of setting up a Django project, creating models, views, and templates, handling form submissions, and customizing the admin interface. With these skills, you can build more complex applications and continue exploring Django's powerful features.
+### Creating Custom User Forms 📝
 
-Feel free to contribute to this repository, report issues, or ask questions. Happy coding! 🎉
+Create forms for the custom user model:
+
+```python
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import CustomUser
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'name')
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'name')
+```
+
+### Updating Admin Interface 🛠️
+
+Update the admin interface to use the custom user model:
+
+```python
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+
+class CustomUserAdmin(UserAdmin):
+    add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
+    model = CustomUser
+    list_display = ('email', 'name', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active')
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('name',)}),
+        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'name', 'password1', 'password2', 'is_staff', 'is_active')}
+        ),
+    )
+    search_fields = ('email',)
+    ordering = ('email',)
+
+admin.site.register(CustomUser, CustomUserAdmin)
+```
+
+## Conclusion 🎉
+
+Congratulations! You have successfully created a Django CRUD application. This tutorial covered setting up a Django project, creating models, views, and templates, and working with URL parameters and custom user models. Keep exploring Django to build more advanced features and applications.
+
+Happy Coding! 🎉
