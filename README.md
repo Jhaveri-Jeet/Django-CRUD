@@ -1,7 +1,3 @@
-Sure! Let's enhance your Django CRUD tutorial by including details on sending data through the GET method (via URL parameters) and changing the user model in Django.
-
----
-
 # Django CRUD Tutorial 🚀
 
 Welcome to the Django CRUD tutorial! This guide will walk you through creating a simple CRUD (Create, Read, Update, Delete) application using Django, from setting up your environment to deploying a functional web application.
