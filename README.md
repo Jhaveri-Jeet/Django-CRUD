@@ -16,7 +16,8 @@ Welcome to the Django CRUD tutorial! This guide will walk you through creating a
 10. [Django Forms](#django-forms-)
 11. [Working with URL Parameters](#working-with-url-parameters-)
 12. [Customizing the User Model](#customizing-the-user-model-)
-13. [Conclusion](#conclusion-)
+13. [Adding Update and Delete Functionality](#adding-update-and-delete-functionality-)
+14. [Conclusion](#conclusion-)
 
 ## Setup and Installation 🔧
 
@@ -359,11 +360,11 @@ def blog_list(request):
 
 Django supports various types of relationships.
 
-### Def
+### Defining Relationships in Models 💑
 
-ining Relationships 💍
+Define One-to-One, One-to
 
-Define relationships in models:
+-Many, and Many-to-Many relationships:
 
 ```python
 class Author(models.Model):
@@ -374,48 +375,23 @@ class Book(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 ```
 
-### Querying Relationships 🔍
-
-Query related objects:
+### Example: Adding Comments to Blog Posts 📝
 
 ```python
-def author_books(request, author_id):
-    author = Author.objects.get(pk=author_id)
-    books = author.book_set.all()
-    return render(request, 'author_books.html', {'author': author, 'books': books})
-```
-
-### Displaying Related Data in Templates 🌐
-
-Display related data:
-
-```html
-<h2>{{ author.name }}</h2>
-<ul>
-  {% for book in books %}
-  <li>{{ book.title }}</li>
-  {% endfor %}
-</ul>
-```
-
-### Example: Many-to-Many Relationship 👫
-
-```python
-class Student(models.Model):
-    name = models.CharField(max_length=100)
-
-class Course(models.Model):
-    title = models.CharField(max_length=200)
-    students = models.ManyToManyField(Student)
+class Comment(models.Model):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    content = models.TextField()
+    author = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
 ```
 
 ## Django Forms 📝
 
-Forms are crucial for user input.
+Forms are essential for handling user input.
 
-### Creating Forms 📝
+### Creating Forms 🖊️
 
-Create forms in `forms.py`:
+Create a form in `forms.py`:
 
 ```python
 from django import forms
@@ -427,204 +403,269 @@ class UserForm(forms.ModelForm):
         fields = ['name', 'email', 'password', 'image']
 ```
 
-### Handling Form Submissions 📨
+### Rendering Forms in Templates 📄
+
+Render forms in templates:
+
+```html
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Submit</button>
+</form>
+```
+
+### Handling Form Submissions 🚀
 
 Handle form submissions in views:
 
 ```python
-def create_user(request):
-    if request.method == 'POST':
+def add_user(request):
+    if request.method == "POST":
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('user_list')
     else:
         form = UserForm()
-    return render(request, 'create_user.html', {'form': form})
+    return render(request, 'add_user.html', {'form': form})
 ```
 
-### Displaying Forms in Templates 🌐
-
-Display forms in templates:
-
-```html
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Create User</button>
-</form>
-```
-
-### Example: Contact Form 📨
+### Example: Creating a Blog Post Form 📝
 
 ```python
-class ContactForm(forms.Form):
-    name = forms.CharField(max_length=100)
-    email = forms.EmailField()
-    message = forms.CharField(widget=forms.Textarea)
+class BlogForm(forms.ModelForm):
+    class Meta:
+        model = Blog
+        fields = ['title', 'content']
 ```
 
 ```python
-def contact(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
+def add_blog(request):
+    if request.method == "POST":
+        form = BlogForm(request.POST)
         if form.is_valid():
-            # Process the form data
-            return redirect('thank_you')
+            form.save()
+            return redirect('blog_list')
     else:
-        form = ContactForm()
-    return render(request, 'contact.html', {'form': form})
+        form = BlogForm()
+    return render(request, 'add_blog.html', {'form': form})
 ```
 
 ## Working with URL Parameters 🔗
 
-URL parameters are useful for dynamic views and passing data through URLs.
+URL parameters are useful for passing data to views.
 
-### Using Path Parameters 🌐
+### Using URL Parameters 🔄
 
-Capture parameters in URLs:
+Define URL parameters in `urls.py`:
 
 ```python
-from django.urls import path
-from . import views
-
 urlpatterns = [
     path('user/<int:id>/', views.user_detail, name='user_detail'),
 ]
 ```
 
-Handle the parameters in views:
+### Handling URL Parameters in Views 🌐
+
+Retrieve URL parameters in views:
 
 ```python
 def user_detail(request, id):
-    user = UserDetails.objects.get(id=id)
+    user = get_object_or_404(UserDetails, id=id)
     return render(request, 'user_detail.html', {'user': user})
 ```
 
-### Example: Search Functionality 🔍
-
-Capture search parameters:
+### Example: Displaying a Single Blog Post 📄
 
 ```python
-def search(request):
-    query = request.GET.get('q')
-    results = UserDetails.objects.filter(name__icontains=query)
-    return render(request, 'search_results.html', {'results': results})
+def blog_detail(request, id):
+    blog = get_object_or_404(Blog, id=id)
+    return render(request, 'blog_detail.html', {'blog': blog})
 ```
 
-### Displaying Search Results 🌐
+## Customizing the User Model 👥
 
-```html
-<form method="get" action="{% url 'search' %}">
-  <input type="text" name="q" placeholder="Search users..." />
-  <button type="submit">Search</button>
-</form>
+Customize the default user model to fit your needs.
 
-{% for user in results %}
-<p>{{ user.name }}</p>
-{% endfor %}
-```
+### Extending the User Model 🛠️
 
-## Customizing the User Model 🧑‍💻
-
-Django allows you to customize the user model to suit your needs.
-
-### Creating a Custom User Model 📝
-
-Create a custom user model in `models.py`:
+Create a custom user model:
 
 ```python
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        return self.create_user(email, password, **extra_fields)
-
-class CustomUser(AbstractBaseUser):
-    email = models.EmailField(unique=True)
-    name = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+class CustomUser(AbstractUser):
+    phone = models.CharField(max_length=15)
 ```
 
-### Updating Settings ⚙️
+### Updating `settings.py` 🔄
 
-Update settings to use the custom user model:
+Update the `AUTH_USER_MODEL` setting:
 
 ```python
 AUTH_USER_MODEL = 'appname.CustomUser'
 ```
 
-### Creating Custom User Forms 📝
+### Creating User Forms 📝
 
-Create forms for the custom user model:
+Create forms for user registration and authentication.
+
+### Example: Custom User Registration Form 📝
 
 ```python
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('email', 'name')
-
-class CustomUserChangeForm(UserChangeForm):
-    class Meta:
-        model = CustomUser
-        fields = ('email', 'name')
+        fields = ['username', 'password', 'email', 'phone']
 ```
 
-### Updating Admin Interface 🛠️
+## Adding Update and Delete Functionality 🔄
 
-Update the admin interface to use the custom user model:
+Enhance your CRUD application by adding update and delete features.
+
+### Update Functionality 🛠️
+
+1. **Update View:**
+
+   - Add a view function in `views.py` for updating user details.
+
+   ```python
+   from django.shortcuts import render, get_object_or_404, redirect
+   from .models import UserDetails
+   from .forms import UserForm
+
+   def update_user(request, id):
+       user = get_object_or_404(UserDetails, id=id)
+       if request.method == "POST":
+           form = UserForm(request.POST, request.FILES, instance=user)
+           if form.is_valid():
+               form.save()
+               return redirect('user_list')
+       else:
+           form = UserForm(instance=user)
+       return render(request, 'update_user.html', {'form': form})
+   ```
+
+2. **Update Template:**
+
+   - Create an `update_user.html` template.
+
+   ```html
+   <h2>Update User</h2>
+   <form method="post" enctype="multipart/form-data">
+     {% csrf_token %} {{ form.as_p }}
+     <button type="submit">Update</button>
+   </form>
+   ```
+
+3. **Update URL:**
+
+   - Add the URL pattern for the update view in `urls.py`.
+
+   ```python
+   urlpatterns = [
+       ...
+       path('user/update/<int:id>/', views.update_user, name='update_user'),
+   ]
+   ```
+
+### Delete Functionality 🗑️
+
+1. **Delete View:**
+
+   - Add a view function in `views.py` for deleting user details.
+
+   ```python
+   from django.shortcuts import render, get_object_or_404, redirect
+   from .models import UserDetails
+
+   def delete_user(request, id):
+       user = get_object_or_404(UserDetails, id=id)
+       if request.method == "POST":
+           user.delete()
+           return redirect('user_list')
+       return render(request, 'delete_user.html', {'user': user})
+   ```
+
+2. **Delete Template:**
+
+   - Create a `delete_user.html` template.
+
+   ```html
+   <h2>Are you sure you want to delete this user?</h2>
+   <form method="post">
+     {% csrf_token %}
+     <button type="submit">Delete</button>
+   </form>
+   ```
+
+3. **Delete URL:**
+
+   - Add the URL pattern for the delete view in `urls.py`.
+
+   ```python
+   urlpatterns = [
+       ...
+       path('user/delete/<int:id>/', views.delete_user, name='delete_user'),
+   ]
+   ```
+
+### Example: Update and Delete Blog Posts 📝
 
 ```python
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
-from .forms import CustomUserCreationForm, CustomUserChangeForm
+# views.py
+from .models import Blog
+from .forms import BlogForm
 
-class CustomUserAdmin(UserAdmin):
-    add_form = CustomUserCreationForm
-    form = CustomUserChangeForm
-    model = CustomUser
-    list_display = ('email', 'name', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_active')
-    fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('name',)}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
-    )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'name', 'password1', 'password2', 'is_staff', 'is_active')}
-        ),
-    )
-    search_fields = ('email',)
-    ordering = ('email',)
+def update_blog(request, id):
+    blog = get_object_or_404(Blog, id=id)
+    if request.method == "POST":
+        form = BlogForm(request.POST, instance=blog)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_list')
+    else:
+        form = BlogForm(instance=blog)
+    return render(request, 'update_blog.html', {'form': form})
 
-admin.site.register(CustomUser, CustomUserAdmin)
+def delete_blog(request, id):
+    blog = get_object_or_404(Blog, id=id)
+    if request.method == "POST":
+        blog.delete()
+        return redirect('blog_list')
+    return render(request, 'delete_blog.html', {'blog': blog})
+```
+
+```python
+# urls.py
+urlpatterns = [
+    ...
+    path('blog/update/<int:id>/', views.update_blog, name='update_blog'),
+    path('blog/delete/<int:id>/', views.delete_blog, name='delete_blog'),
+]
+```
+
+```html
+<!-- update_blog.html -->
+<h2>Update Blog</h2>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Update</button>
+</form>
+```
+
+```html
+<!-- delete_blog.html -->
+<h2>Are you sure you want to delete this blog post?</h2>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Delete</button>
+</form>
 ```
 
 ## Conclusion 🎉
 
-Congratulations! You have successfully created a Django CRUD application. This tutorial covered setting up a Django project, creating models, views, and templates, and working with URL parameters and custom user models. Keep exploring Django to build more advanced features and applications.
-
-Happy Coding! 🎉
+Congratulations! You've successfully built a Django CRUD application with create, read, update, and delete functionality. This tutorial covered the basics, and now you can expand on it to build more complex applications. Keep exploring Django's documentation and features to enhance your skills further. Happy coding!
